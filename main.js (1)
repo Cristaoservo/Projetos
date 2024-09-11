@@ -1,0 +1,56 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Selecionar elementos do DOM
+    const display = document.getElementById('texto');
+    const buttons = document.querySelectorAll('.btn');
+    const resetButton = document.getElementById('reset');
+    const equalsButton = document.getElementById('botao');
+    const deleteButton = document.querySelector('.btn[data-action="delete"]');
+
+    // Variável para armazenar a expressão atual
+    let currentInput = '';
+
+    // Função para atualizar o display
+    const updateDisplay = () => {
+        display.value = currentInput;
+    };
+
+    // Adicionar eventos aos botões
+    buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const value = e.target.dataset.value;
+            const action = e.target.dataset.action;
+
+            // Adiciona o valor ao input
+            if (action) {
+                if (action === 'delete') {
+                    currentInput = currentInput.slice(0, -1);
+                } else {
+                    currentInput += action;
+                }
+            } else if (value) {
+                currentInput += value;
+            }
+            updateDisplay();
+        });
+    });
+
+    // Função para limpar o display
+    resetButton.addEventListener('click', () => {
+        currentInput = '';
+        updateDisplay();
+    });
+
+    // Função para calcular o resultado
+    equalsButton.addEventListener('click', () => {
+        try {
+            // Substitui 'x' por '*' e avalia a expressão
+            const formattedInput = currentInput.replace(/x/g, '*');
+            const result = eval(formattedInput);
+            // Se o resultado for Infinity ou NaN, retorna 0
+            currentInput = isFinite(result) ? result.toString() : '0';
+        } catch (error) {
+            currentInput = 'Erro';
+        }
+        updateDisplay();
+    });
+});
